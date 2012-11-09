@@ -1,10 +1,34 @@
-%skip   space                   \s
-%token _variable                @
-%token variable_                :                       
-%token semicolon                ;                       
-%token id                       \w+
-%token hash               		#
+%skip   space                    \s
+%token  arobase                  \@
+%token  colon                    :
+%token  semicolon                ;
+%token  id                       [a-zA-Z0-9]+
+%token  hash                     #
+%token  true                     true
+%token  false                    false
+%token  null                     null
 
-define_variable:
-		::_variable:: <id> ::variable_:: ::hash:: <color> ::semicolon::
-	
+
+id:
+    <id> ::semicolon::
+
+key:
+    <id> ::colon::
+
+color:
+    ::hash:: id()
+
+value:
+   color() | id()
+
+variable:
+    ::arobase:: key()
+
+#pair:
+    ( variable() | key() ) value()
+
+
+
+
+
+
