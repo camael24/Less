@@ -1,34 +1,21 @@
 %skip   space                    \s
-%token  arobase                  \@
+%token  arobase                  @
 %token  colon                    :
 %token  semicolon                ;
-%token  id                       [a-zA-Z0-9]+
-%token  hash                     #
-%token  true                     true
-%token  false                    false
-%token  null                     null
+%token  key                     [^:]+
+%token  val                     [^;]+
 
 
-id:
-    <id> ::semicolon::
+
+#parsing:
+     (
+        ::arobase:: key() ::colon::                         #variable
+     )+
 
 key:
-    <id> ::colon::
-
-color:
-    ::hash:: id()
+    <key>
 
 value:
-   color() | id()
-
-variable:
-    ::arobase:: key()
-
-#pair:
-    ( variable() | key() ) value()
-
-
-
-
+    <val>
 
 
