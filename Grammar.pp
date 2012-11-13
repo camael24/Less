@@ -1,21 +1,40 @@
 %skip   space                    \s
-%token  arobase                  @
-%token  colon                    :
-%token  semicolon                ;
-%token  key                     [^:]+
-%token  val                     [^;]+
+%skip   comment:space            \s
+%skip   hash                     #
+%token  arobase                  @                  -> string
+%token  colon                    :                  -> string
+%token  string:colon             :                  -> string
+%token  semicolon                ;                  -> default
+%token  string:semicolon         ;                  -> default
+%token  string:string            [^:;/]+            -> default
+%token  comment:string           [a-zA-Z0-9\s-]+    -> default
+%token  comment                  //                 -> comment
+
 
 
 
 #parsing:
      (
-        ::arobase:: key() ::colon::                         #variable
+        variable()
+      | commentLine()
+     )*
+
+#variable:
+     (
+         ::arobase:: key() ::colon:: value() ::semicolon::
      )+
 
-key:
-    <key>
 
-value:
-    <val>
+#commentLine:
+    ::comment:: comment()
+
+#comment:
+   ::string::
+
+#key:
+    <string>
+
+#value:
+    <string>
 
 
