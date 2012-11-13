@@ -1,13 +1,15 @@
 %skip   space                    \s
 %skip   comment:space            \s
 %skip   hash                     #
+%skip   comma                    ,
+
 %token  arobase                  @                  -> string
 %token  colon                    :                  -> string
 %token  string:colon             :                  -> string
 %token  semicolon                ;                  -> default
 %token  string:semicolon         ;                  -> default
-%token  string:string            [^:;/]+            -> default
-%token  comment:string           [a-zA-Z0-9\s-]+    -> default
+%token  string:string            [^:;\r\n]+          -> default
+%token  comment:string           [^\r\n]+             -> default
 %token  comment                  //                 -> comment
 
 
@@ -29,7 +31,7 @@
     ::comment:: comment()
 
 #comment:
-   ::string::
+   <string>
 
 #key:
     <string>
