@@ -5,22 +5,28 @@
 %skip   hash                     #
 %skip   comma                    ,
 
+// Variable
+
 %token  arobase                  @                  -> string
 %token  colon                    :                  -> string
-%token  string:colon             :                  -> string
-%token  semicolon                ;                  -> default
+%token  string:colon             :
+%token  semicolon                ;
 
 %token  string:semicolon         ;                  -> default
 %token  string:string            [^:;\r\n]+         -> default
+
+// Comment
+
 %token  comment:string           [^\r\n]+           -> default
 %token  comment                  //                 -> comment
 
-%token  class                    [^{]+
+// Block class
 
+%token  class                    [^{]+
 %token  brace_                   {                  -> block
-%token  block:string             [^:;}{]+           -> block
-%token  block:colon              :                  -> block
-%token  block:semicolon          ;                  -> block
+%token  block:string             [^:;}{]+
+%token  block:colon              :
+%token  block:semicolon          ;
 %token  block:_brace             }                  -> default
 
 
