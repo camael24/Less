@@ -1,10 +1,16 @@
 %skip           space                   [ \t]+
 %token          endl                    \v+
 
-
+// Generic
+%token          string                  [^@;:{}\v]+
+%token          semicolon               ;+
+%token          colon                   :+
+%token          brace_                  {+
+%token          _brace                  }+
+%token          arobase                 \@+
 
 // Keyword
-%token          keyword                 ^\@(import\-once|import|charset)$
+%token          keyword                 ([import\-once|import|charset])
 
 // String
 %token          quote_                  ("|')                -> string
@@ -21,22 +27,19 @@
 %token          commentB:string         [^\*\v]+
 %skip           commentB:space          [ \t]+
 %token          commentB:endl           \v+
-%token          commentB:_commentBlock  [\*]{1,}/           -> default
 %token          commentB:star           \*+
+%token          commentB:_commentBlock  [\*]{1,}/           -> default
 
-// Generic
-%token          string                  [^;:{}\v]+
-%token          arobase                 @
-%token          semicolon               ;
-%token          colon                   :
-%token          brace_                  {
-%token          _brace                  }
+
+
+
 
 
 // PRIMARY RULES
 #root:
     (
-        setVariable()
+        keyword()
+      | setVariable()
       | comment()
       | class()
       | ::endl::
@@ -63,7 +66,7 @@ commentString:
 
 // LESS RULES
 #keyword:
-    <keyword> string() ::semicolon::
+    <keyword> <string> ::semicolon::
 
 #class:
     selector() ::brace_:: ::endl::? (class() | properties() | ::endl::)+ ::_brace:: (comment() | ::endl::))?
@@ -78,4 +81,4 @@ commentString:
     ::comment:: commentString()? ::endl::+
 
 #setVariable:
-    ::arobase:: <string>
+    <arobase> <string> (::colon:: (string() | <string>))? ::semicolon::
