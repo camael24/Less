@@ -1,5 +1,15 @@
 %skip           space                   [ \t]+
-%skip          endl                    \v+
+%skip           endl                    \v+
+
+// COMMENT
+%token          slash                   [/]{2,}
+%token          block_                  /[\*]{1,}            -> cBlock
+%skip           cBlock:space            \s
+%skip           cBlock:aslash           \\
+%token          cBlock:comment          [^\*/\v]+
+%token          cBlock:_block           \*/                 -> default
+%token          cBlock:single           /                   -> default
+
 
 // DECLARATION
 %token          at_charset              @charset
@@ -22,6 +32,8 @@
 %token          _parenthesis            \)
 
 
+
+
 // GENERIC
 %token          brace_                  {
 %token          _brace                  }
@@ -36,7 +48,8 @@
 // PRIMARY RULES
 #root:
     (
-        declaration()
+        comment()
+      | declaration()
       | getVariable()
       | ruleset()
       | endl()
@@ -61,13 +74,22 @@ stringInQuote:
 // LESS RULES
 
 declaration:
-    ( ::at_charset:: #charset | ::at_import:: #import | ::at_importonce:: #importonce) string()+ ::semicolon::
+    ( ::at_charset:: #charset | ::at_import:: #import | ::at_importonce:: #importonce) string() ::semicolon::
 
 #getVariable:
-    ::at:: <name> (::colon:: string()+ #setVariable)? ::semicolon::?
+    ::at:: <name> (::colon:: string() #setVariable)? ::semicolon::?
 
 #rule:
     <string> ::colon:: string() ::semicolon::
 
 #ruleset:
-    <string> ::brace_:: (ruleset() | rule() | getVariable() | <string> ::semicolon::?)+ ::_brace::
+    <string> ::brace_:: (ruleset() | rule() | getVariable() | <string> ::semicolon::?)+ ::_brace:: comment()?
+
+#comment:
+    commentLine() | commentBlock()
+
+#commentLine:
+    ::slash:: <string>?
+
+#commentBlock:
+    ::block_::  ( <comment>+ (::_block:: | ::single::))
