@@ -1,1 +1,14 @@
 @charset "UTF-16";
+@import "foo.less";
+@import-once "bar.less";
+
+@var: "Ola";
+@bar;
+
+
+@charset "UTF-8";
+
+@import "import/import-charset-test";
+@import url("import/import-test-a");
+@var-complox: "Bar";
+@import (less, multiple) url("import/import-test-d.css") screen and (max-width: 603px);

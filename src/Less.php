@@ -76,10 +76,10 @@
                     $dump   = new \Hoa\Compiler\Visitor\Dump();
                     $visit  = $dump->visit($parser);
 
-                    return is_string($visit);
+                    return array('output' => $visit);
                 }
                 catch (\Hoa\Compiler\Exception\UnexpectedToken $e) {
-                    return $e->getFormattedMessage();
+                    return array('error' => $e->getFormattedMessage());
 
                 }
             }

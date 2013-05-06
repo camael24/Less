@@ -28,16 +28,20 @@
     };
 
     $less = new \Less();
-    $less->setCompiler(Hoa\Compiler\Llk::load(new Hoa\File\Read('hoa://Application/Less.pp')));
+    $less->setCompiler(Hoa\Compiler\Llk::load(new Hoa\File\Read('hoa://Application/src/Less.pp')));
     $less->addInputFile('hoa://Application/test/sandbox.less');
-    $less->addInputDirectory('hoa://Application/test/less/');
+//    $less->addInputDirectory('hoa://Application/test/less/');
 
     $add('File', 'Result');
 
     foreach ($less->getInputFiles() as $file) {
-        $return = $less->validateFile($file);
-        $bool   = (is_string($return)) ? false : $return;
+        $out  = $less->validateFile($file);
+        $bool = array_key_exists('output', $out);
 
+        if(array_key_exists('error', $out)) {
+            $return = $out['error'];
+            $bool   = false;
+        }
         $add($file, $bool);
         if($bool === false)
             break;
