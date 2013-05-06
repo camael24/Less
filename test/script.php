@@ -30,7 +30,7 @@
     $less = new \Less();
     $less->setCompiler(Hoa\Compiler\Llk::load(new Hoa\File\Read('hoa://Application/src/Less.pp')));
     $less->addInputFile('hoa://Application/test/sandbox.less');
-//    $less->addInputDirectory('hoa://Application/test/less/');
+    $less->addInputDirectory('hoa://Application/test/less/');
 
     $add('File', 'Result');
 
