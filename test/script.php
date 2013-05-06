@@ -22,6 +22,8 @@
         }
 
         $add = function ($file, $bool, $time = '') use (&$rapport) {
+            if($time < 0)
+                $time = '';
             $rapport[] = array(
                 $file,
                 test($bool),

@@ -47,7 +47,7 @@ endl:
     ::endl::+
 
 string:
-    (function() | operation() | stringInQuote() | <string>)+
+    (getVariable() | function() | operation() | stringInQuote() | <string>)+
 
 stringInQuote:
     ::quote_:: <string> ::_quote::
@@ -56,7 +56,7 @@ stringInQuote:
     <string> ::parenthesis_:: string() ( ::comma:: string() )* ::_parenthesis::
 
 #operation:
-    ::parenthesis_:: string() ( ::comma:: string() )* ::_parenthesis::
+    ::parenthesis_:: string() ( (::comma:: | ::colon::) string() )* ::_parenthesis::
 
 // LESS RULES
 
@@ -70,4 +70,4 @@ declaration:
     <string> ::colon:: string() ::semicolon::
 
 #ruleset:
-    <string> ::brace_:: (ruleset() | rule() | getVariable())+ ::_brace::
+    <string> ::brace_:: (ruleset() | rule() | getVariable() | <string> ::semicolon::?)+ ::_brace::

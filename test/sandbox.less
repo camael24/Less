@@ -1,45 +1,6 @@
-#yelow {
-  #short {
-    color: #fea;
-  }
-  #long {
-    color: #ffeeaa;
-  }
-  #rgba {
-    color: rgba(255, 238, 170, 0.1);
-  }
-  #argb {
-    color: argb(rgba(255, 238, 170, 0.1));
-  }
-}
-
-#blue {
-  #short {
-    color: #00f;
-  }
-  #long {
-    color: #0000ff;
-  }
-  #rgba {
-    color: rgba(0, 0, 255, 0.1);
-  }
-  #argb {
-    color: argb(rgba(0, 0, 255, 0.1));
-  }
-}
-
-
-#alpha {
-  #short {
-    opacity: alpha(#aaa);
-  }
-  #long {
-    opacity: alpha(#bababa);
-  }
-  #rgba {
-    opacity: alpha(rgba(50, 120, 95, 0.2));
-  }
-  #hsl {
-    opacity: alpha(hsl(120, 100%, 50%));
-  }
-}
+@import "import/import-once-test-c";
+@import "import/import-once-test-c";
+@import "import/import-once-test-c";
+@import "import/deeper/import-once-test-a";
+@import-once "import/deeper/import-once-test-a";
+@importVar: "foo";
