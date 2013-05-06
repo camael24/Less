@@ -1,22 +1,33 @@
 %skip           space                   [ \t]+
-%skip           endl                    \v+
+%skip          endl                    \v+
 
 // DECLARATION
-%token          at_charset              @charset            -> key
-%token          at_importonce           @import-once        -> key
-%token          at_import               @import             -> key
-%skip           key:colon               :
-%token          key:string              [^;]                -> default
+%token          at_charset              @charset
+%token          at_importonce           @import-once
+%token          at_import               @import
 
 
 // VARIABLE
 %token          at                      @                   -> variable
-%token          variable:name           \w+[-]?\w+          -> default
+%token          variable:name           \w+                 -> default
+
+// STRING
+%token          quote_                  ("|')               -> string
+%token          string:string           [^"']+
+%token          string:_quote           ("|')               -> default
+
+// FUNCTION
+%token          parenthesis_            \(
+%token          comma                   ,+
+%token          _parenthesis            \)
+
 
 // GENERIC
-%token          colon                   :
-%token          semicolon               ;
-%token          string                  [^;:\v]+
+%token          brace_                  {
+%token          _brace                  }
+%token          colon                   :+
+%token          semicolon               ;+
+%token          string                  [^\(\);,{}:\v]+
 
 
 
@@ -27,14 +38,36 @@
     (
         declaration()
       | getVariable()
+      | ruleset()
+      | endl()
     )+
 
 // PARSES RULES
+endl:
+    ::endl::+
+
+string:
+    (function() | operation() | stringInQuote() | <string>)+
+
+stringInQuote:
+    ::quote_:: <string> ::_quote::
+
+#function:
+    <string> ::parenthesis_:: string() ( ::comma:: string() )* ::_parenthesis::
+
+#operation:
+    ::parenthesis_:: string() ( ::comma:: string() )* ::_parenthesis::
 
 // LESS RULES
 
 declaration:
-    ( ::at_charset:: #charset | ::at_import:: #import | ::at_importonce:: #importonce) <string>+ ::semicolon::
+    ( ::at_charset:: #charset | ::at_import:: #import | ::at_importonce:: #importonce) string()+ ::semicolon::
 
 #getVariable:
-    ::at:: <name> (::colon:: <string> #setVariable)? ::semicolon::?
+    ::at:: <name> (::colon:: string()+ #setVariable)? ::semicolon::?
+
+#rule:
+    <string> ::colon:: string() ::semicolon::
+
+#ruleset:
+    <string> ::brace_:: (ruleset() | rule() | getVariable())+ ::_brace::

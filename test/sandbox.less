@@ -1,14 +1,45 @@
-@charset "UTF-16";
-@import "foo.less";
-@import-once "bar.less";
+#yelow {
+  #short {
+    color: #fea;
+  }
+  #long {
+    color: #ffeeaa;
+  }
+  #rgba {
+    color: rgba(255, 238, 170, 0.1);
+  }
+  #argb {
+    color: argb(rgba(255, 238, 170, 0.1));
+  }
+}
 
-@var: "Ola";
-@bar;
+#blue {
+  #short {
+    color: #00f;
+  }
+  #long {
+    color: #0000ff;
+  }
+  #rgba {
+    color: rgba(0, 0, 255, 0.1);
+  }
+  #argb {
+    color: argb(rgba(0, 0, 255, 0.1));
+  }
+}
 
 
-@charset "UTF-8";
-
-@import "import/import-charset-test";
-@import url("import/import-test-a");
-@var-complox: "Bar";
-
+#alpha {
+  #short {
+    opacity: alpha(#aaa);
+  }
+  #long {
+    opacity: alpha(#bababa);
+  }
+  #rgba {
+    opacity: alpha(rgba(50, 120, 95, 0.2));
+  }
+  #hsl {
+    opacity: alpha(hsl(120, 100%, 50%));
+  }
+}

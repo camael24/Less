@@ -72,13 +72,13 @@
             public function validateFile ($file) {
                 $compiler = $this->getCompiler();
                 try {
-                    $parser = $compiler->parse(file_get_contents($file));
+                    $parser = $compiler->parse(file_get_contents($file) . "\n");
                     $dump   = new \Hoa\Compiler\Visitor\Dump();
                     $visit  = $dump->visit($parser);
 
                     return array('output' => $visit);
                 }
-                catch (\Hoa\Compiler\Exception\UnexpectedToken $e) {
+                catch (\Hoa\Compiler\Exception $e) {
                     return array('error' => $e->getFormattedMessage());
 
                 }
