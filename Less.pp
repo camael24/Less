@@ -10,7 +10,7 @@
 %token          arobase                 \@+
 
 // Keyword
-%token          keyword                 ([import\-once|import|charset])
+%token          keyword                 (import\-once|import|charset)
 
 // String
 %token          quote_                  ("|')                -> string
@@ -38,8 +38,7 @@
 // PRIMARY RULES
 #root:
     (
-        keyword()
-      | setVariable()
+        setVariable()
       | comment()
       | class()
       | ::endl::
@@ -65,11 +64,9 @@ commentString:
     ::star::? <string> ::star::?
 
 // LESS RULES
-#keyword:
-    <keyword> <string> ::semicolon::
 
 #class:
-    selector() ::brace_:: ::endl::? (class() | properties() | ::endl::)+ ::_brace:: (comment() | ::endl::))?
+    selector() ::brace_:: (class() | properties() | ::endl::)+ ::_brace:: (comment() | ::endl::))?
 
 #comment:
     (commentLine() | commentBlock())
@@ -81,4 +78,4 @@ commentString:
     ::comment:: commentString()? ::endl::+
 
 #setVariable:
-    <arobase> <string> (::colon:: (string() | <string>))? ::semicolon::
+    <arobase> <string> (::colon:: <string>)? ::semicolon::

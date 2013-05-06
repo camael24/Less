@@ -71,19 +71,17 @@
 
             public function validateFile ($file) {
                 $compiler = $this->getCompiler();
-                $parser   = $compiler->parse(file_get_contents($file));
-                $i        = 0;
+                try {
+                    $parser = $compiler->parse(file_get_contents($file));
+                    $dump   = new \Hoa\Compiler\Visitor\Dump();
+                    $visit  = $dump->visit($parser);
 
-                foreach ($compiler->getTrace() as $element)
-                    if($element instanceof Hoa\Compiler\Llk\Rule\Entry)
-                        echo str_repeat('>   ', ++$i), 'enter ', $element->getRule(), "\n";
-                    elseif($element instanceof Hoa\Compiler\Llk\Rule\Token)
-                        echo str_repeat('    ', $i + 1), 'token ', $element->getTokenName(), ', consumed ', $element->getValue(), "\n";
-                    else
-                        echo str_repeat('<   ', $i--), 'exit ', $element->getRule(), "\n";
+                    return is_string($visit);
+                }
+                catch (\Hoa\Compiler\Exception\UnexpectedToken $e) {
+                    return $e->getFormattedMessage();
 
-
-//                return strval($dump->visit($parser));
+                }
             }
 
         }
