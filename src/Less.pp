@@ -1,14 +1,8 @@
 %skip           space                   [ \t]+
 %skip           endl                    \v+
-
 // COMMENT
 %token          slash                   [/]{2,}
-%token          block_                  /[\*]{1,}            -> cBlock
-%skip           cBlock:space            \s
-%skip           cBlock:aslash           \\
-%token          cBlock:comment          [^\*/\v]+
-%token          cBlock:_block           \*/                 -> default
-%token          cBlock:single           /                   -> default
+%token          block_comment           /\*(.|\n)*?\*/
 
 
 // DECLARATION
@@ -39,7 +33,8 @@
 %token          _brace                  }
 %token          colon                   :+
 %token          semicolon               ;+
-%token          string                  [^\(\);,{}:\v]+
+%token          string                  [^/\(\);,{}:\v]+
+
 
 
 
@@ -49,6 +44,7 @@
 #root:
     (
         comment()
+      | function()
       | declaration()
       | getVariable()
       | ruleset()
@@ -66,30 +62,26 @@ stringInQuote:
     ::quote_:: <string> ::_quote::
 
 #function:
-    <string> ::parenthesis_:: string() ( ::comma:: string() )* ::_parenthesis::
+    <string> ::parenthesis_:: ( (::comma:: | comment() | function() | string())* )? ::_parenthesis:: ::semicolon::?
 
 #operation:
     ::parenthesis_:: string() ( (::comma:: | ::colon::) string() )* ::_parenthesis::
 
+selector:
+    string() (::comma:: | comment() | function() | <string>)*
 // LESS RULES
 
 declaration:
     ( ::at_charset:: #charset | ::at_import:: #import | ::at_importonce:: #importonce) string() ::semicolon::
 
 #getVariable:
-    ::at:: <name> (::colon:: string() #setVariable)? ::semicolon::?
+    ::at:: <name> (::colon:: string() #setVariable)?  comment()* ::semicolon::? comment()*
 
 #rule:
-    <string> ::colon:: string() ::semicolon::
+    <string> ::colon:: string() (::comma:: | comment() | string())* comment()* ::semicolon::? comment()*
 
 #ruleset:
-    <string> ::brace_:: (ruleset() | rule() | getVariable() | <string> ::semicolon::?)+ ::_brace:: comment()?
+    selector() ::brace_:: (ruleset() | rule() | getVariable() | <string> ::semicolon::?)+ ::_brace:: comment()?
 
-#comment:
-    commentLine() | commentBlock()
-
-#commentLine:
-    ::slash:: <string>?
-
-#commentBlock:
-    ::block_::  ( <comment>+ (::_block:: | ::single::))
+comment:
+    (::slash:: <string>? #commentLine | <block_comment>+ #commentBlock)

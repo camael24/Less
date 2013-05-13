@@ -8,6 +8,10 @@
         ->import('Console.Chrome.Style');
 
 
+    $less = new \Less();
+    $less->setCompiler(Hoa\Compiler\Llk::load(new Hoa\File\Read('hoa://Application/src/Less.pp')));
+    $less->addInputFile('hoa://Application/test/sandbox.less');
+    $less->addInputDirectory('hoa://Application/test/less/');
     try {
         $store  = array();
         $return = null;
@@ -31,10 +35,7 @@
             );
         };
 
-        $less = new \Less();
-        $less->setCompiler(Hoa\Compiler\Llk::load(new Hoa\File\Read('hoa://Application/src/Less.pp')));
-        $less->addInputFile('hoa://Application/test/sandbox.less');
-//        $less->addInputDirectory('hoa://Application/test/less/');
+
 
         $add('File', 'Result', 'Time');
 
@@ -57,7 +58,6 @@
         }
 
         echo \Hoa\Console\Chrome\Text::columnize($rapport) . "\n";
-        echo $return;
     }
     catch (\Hoa\Core\Exception $e) {
         echo $e->getFormattedMessage() . "\n";
