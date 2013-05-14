@@ -8,12 +8,13 @@
         ->import('Bench.~')
         ->import('Console.Chrome.Style');
 
-
+    $bench = new \Hoa\Bench\Bench();
+    $bench->init->start();
     $less = new \Less();
     $less->setCompiler(Hoa\Compiler\Llk::load(new Hoa\File\Read('hoa://Application/src/Less.pp')));
     $less->addInputFile('hoa://Application/test/sandbox.less');
+    $bench->init->stop();
 
-    $bench = new \Hoa\Bench\Bench();
 
     try {
         $store  = array();
@@ -41,10 +42,12 @@
 
         $add('File', 'Result', 'Time');
 
-        $bench->single->start();
+
         foreach ($less->getInputFiles() as $file) {
+            $bench->file->start();
             $start = microtime();
             $out   = $less->validateFile($file);
+            $bench->file->stop();
             $bool  = array_key_exists('output', $out);
             $end   = microtime();
 
@@ -59,7 +62,6 @@
             if($bool === false)
                 break;
         }
-        $bench->single->stop();
         echo \Hoa\Console\Chrome\Text::columnize($rapport) . "\n";
         echo $return . "\n";
         echo $bench;

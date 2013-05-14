@@ -5,8 +5,8 @@
 %token          http                    http://
 
 // COMMENT
-%token          slash                   //[^\v]*
-%token          block_comment           /\*(.|\n)*?\*/
+%skip           slash                   //[^\v]*
+%skip           block_comment           /\*(.|\n)*?\*/
 
 
 // DECLARATION
@@ -38,6 +38,7 @@
 %token          brace_                  {+
 %token          _brace                  }+
 %token          colon                   :+
+%token          child                   >+
 %token          semicolon               ;+
 %token          string                  [^"(\);,{}:\v]+
 
@@ -49,8 +50,7 @@
 // PRIMARY RULES
 #root:
     (
-        comment()
-      | function()
+       function()
       | declaration()
       | getVariable()
       | ruleset()
@@ -63,27 +63,21 @@ string:
 stringInQuote:
     ::quote_:: <string>* ::_quote::
 
-args:
-    (::comma:: | <colon> | comment() | function() | string())*
-
 #function:
-    <string>? ::parenthesis_:: args()? ::_parenthesis:: (::semicolon:: #functionCall)?
+    <string>? ::parenthesis_:: (::comma:: | <colon> |  function() | string())* ::_parenthesis:: ::semicolon::?
 
 selector:
-    <colon>? string() (<comma> | <colon> | comment() | string())*
+    (<comma> | <colon> | <child> | string())*
 // LESS RULES
 
 declaration:
     ( ::at_charset:: #charset | ::at_import:: #import | ::at_importonce:: #importonce | ::at_namespace:: #namespace) string() ::semicolon::
 
 #getVariable:
-    ::at:: (::at:: #getVariableRelative)? <name> (::colon:: (string() | <comma>)* #setVariable)?  comment()* ::semicolon::? comment()*
+    ::at:: (::at:: #getVariableRelative)? <name> (::colon:: (string() | <comma>)* #setVariable)?  ::semicolon::?
 
 #rule:
-    <string> ::colon:: (<comma> | comment() | string())* comment()* ::semicolon::? comment()*
+    <string> ::colon:: (::comma:: | string())* ::semicolon::?
 
 #ruleset:
-    selector() ::brace_:: (comment() | function() | rule() | ruleset() | getVariable() | <string> ::semicolon::?)* ::_brace:: (::semicolon:: | comment())*
-
-comment:
-    (<slash> #commentLine | <block_comment>+ #commentBlock)
+    selector() ::brace_:: ( function() | rule() | ruleset() | getVariable())* ::_brace:: ::semicolon::?
