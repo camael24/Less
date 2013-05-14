@@ -40,7 +40,7 @@
 %token          colon                   :+
 %token          child                   >+
 %token          semicolon               ;+
-%token          string                  [^"(\);,{}:\v]+
+%token          string                  [^'"(\);,{}:\v]+
 
 
 
@@ -61,7 +61,7 @@ string:
     (getVariable() | function()  | stringInQuote() | <http>? <string>)+
 
 stringInQuote:
-    ::quote_:: <string>* ::_quote::
+    ::quote_:: <string>? ::_quote::
 
 #function:
     <string>? ::parenthesis_:: (::comma:: | <colon> |  function() | string())* ::_parenthesis:: ::semicolon::?
