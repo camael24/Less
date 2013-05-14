@@ -22,9 +22,9 @@
 %token          variable:name           [a-z0-9A-Z\-]+      -> default
 
 // STRING
-%token          quote_                  ("|')               -> string
+%token          quote_                  ("|')+              -> string
 %token          string:string           [^"']+
-%token          string:_quote           ("|')               -> default
+%token          string:_quote           ("|')+              -> default
 
 // FUNCTION
 %token          parenthesis_            \(
@@ -54,18 +54,14 @@
       | declaration()
       | getVariable()
       | ruleset()
-      | endl()
     )+
 
 // PARSES RULES
-endl:
-    ::endl::+
-
 string:
     (getVariable() | function()  | stringInQuote() | <http>? <string>)+
 
 stringInQuote:
-    ::quote_:: (stringInQuote() | <string>)* ::_quote::
+    ::quote_:: <string>* ::_quote::
 
 args:
     (::comma:: | <colon> | comment() | function() | string())*
@@ -84,7 +80,7 @@ declaration:
     ::at:: (::at:: #getVariableRelative)? <name> (::colon:: (string() | <comma>)* #setVariable)?  comment()* ::semicolon::? comment()*
 
 #rule:
-    <string> ::colon:: (<comma> | comment() | string())* comment()* (::semicolon::? | endl()) comment()*
+    <string> ::colon:: (<comma> | comment() | string())* comment()* ::semicolon::? comment()*
 
 #ruleset:
     selector() ::brace_:: (comment() | function() | rule() | ruleset() | getVariable() | <string> ::semicolon::?)* ::_brace:: (::semicolon:: | comment())*

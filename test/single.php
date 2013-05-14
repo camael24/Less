@@ -5,6 +5,7 @@
     from('Hoa')
         ->import('Console.Chrome.Text')
         ->import('Console.Readline.~')
+        ->import('Bench.~')
         ->import('Console.Chrome.Style');
 
 
@@ -12,6 +13,7 @@
     $less->setCompiler(Hoa\Compiler\Llk::load(new Hoa\File\Read('hoa://Application/src/Less.pp')));
     $less->addInputFile('hoa://Application/test/sandbox.less');
 
+    $bench = new \Hoa\Bench\Bench();
 
     try {
         $store  = array();
@@ -37,9 +39,9 @@
         };
 
 
-
         $add('File', 'Result', 'Time');
 
+        $bench->single->start();
         foreach ($less->getInputFiles() as $file) {
             $start = microtime();
             $out   = $less->validateFile($file);
@@ -57,9 +59,10 @@
             if($bool === false)
                 break;
         }
-
+        $bench->single->stop();
         echo \Hoa\Console\Chrome\Text::columnize($rapport) . "\n";
-        echo $return;
+        echo $return . "\n";
+        echo $bench;
     }
     catch (\Hoa\Core\Exception $e) {
         echo $e->getFormattedMessage() . "\n";
