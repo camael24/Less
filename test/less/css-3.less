@@ -4,6 +4,7 @@
     0pt 4px 6px rgba(255, 255, 255, 0.4) inset;
   -webkit-transform: rotate(-0.0000000001deg);
 }
+
 @font-face {
   font-family: Headline;
   unicode-range: U+??????, U+0???, U+0-7F, U+A5;
@@ -89,11 +90,11 @@ p::before {
 }
 
 @supports ( box-shadow: 2px 2px 2px black ) or
-          ( -moz-box-shadow: 2px 2px 2px black ) {
-  .outline {
-    box-shadow: 2px 2px 2px black;
-    -moz-box-shadow: 2px 2px 2px black;
-  }
+( -moz-box-shadow: 2px 2px 2px black ) {
+.outline {
+  box-shadow: 2px 2px 2px black;
+  -moz-box-shadow: 2px 2px 2px black;
+}
 }
 
 @-x-document url-prefix(""github.com"") {

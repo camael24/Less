@@ -72,7 +72,7 @@
             public function validateFile ($file) {
                 $compiler = $this->getCompiler();
                 try {
-                    $parser = $compiler->parse(file_get_contents($file) . "\n");
+                    $parser = $compiler->parse("\n" . file_get_contents($file) . "\n");
                     $dump   = new \Hoa\Compiler\Visitor\Dump();
                     $visit  = $dump->visit($parser);
 

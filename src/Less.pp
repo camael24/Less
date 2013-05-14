@@ -1,19 +1,25 @@
 %skip           space                   [ \t]+
 %skip           endl                    \v+
+
+// URL
+%token          http                    http://
+
 // COMMENT
-%token          slash                   [/]{2,}
+%token          slash                   //[^\v]*
 %token          block_comment           /\*(.|\n)*?\*/
 
 
 // DECLARATION
 %token          at_charset              @charset
+%token          at_namespace            @namespace
 %token          at_importonce           @import-once
 %token          at_import               @import
 
 
 // VARIABLE
 %token          at                      @                   -> variable
-%token          variable:name           \w+                 -> default
+%token          variable:at             @
+%token          variable:name           [a-z0-9A-Z\-]+      -> default
 
 // STRING
 %token          quote_                  ("|')               -> string
@@ -29,11 +35,11 @@
 
 
 // GENERIC
-%token          brace_                  {
-%token          _brace                  }
+%token          brace_                  {+
+%token          _brace                  }+
 %token          colon                   :+
 %token          semicolon               ;+
-%token          string                  [^/\(\);,{}:\v]+
+%token          string                  [^"(\);,{}:\v]+
 
 
 
@@ -56,32 +62,32 @@ endl:
     ::endl::+
 
 string:
-    (getVariable() | function() | operation() | stringInQuote() | <string>)+
+    (getVariable() | function()  | stringInQuote() | <http>? <string>)+
 
 stringInQuote:
-    ::quote_:: <string> ::_quote::
+    ::quote_:: (stringInQuote() | <string>)* ::_quote::
+
+args:
+    (::comma:: | <colon> | comment() | function() | string())*
 
 #function:
-    <string> ::parenthesis_:: ( (::comma:: | comment() | function() | string())* )? ::_parenthesis:: ::semicolon::?
-
-#operation:
-    ::parenthesis_:: string() ( (::comma:: | ::colon::) string() )* ::_parenthesis::
+    (<string> | <string>? #operation) ::parenthesis_:: args()? ::_parenthesis:: (::semicolon:: #functionCall)?
 
 selector:
-    string() (::comma:: | comment() | function() | <string>)*
+    <colon>? string() (<comma> | <colon> | comment() | string())*
 // LESS RULES
 
 declaration:
-    ( ::at_charset:: #charset | ::at_import:: #import | ::at_importonce:: #importonce) string() ::semicolon::
+    ( ::at_charset:: #charset | ::at_import:: #import | ::at_importonce:: #importonce | ::at_namespace:: #namespace) string() ::semicolon::
 
 #getVariable:
-    ::at:: <name> (::colon:: string() #setVariable)?  comment()* ::semicolon::? comment()*
+    ::at:: (::at:: #getVariableRelative)? <name> (::colon:: (<comma> | <string>)* #setVariable)?  comment()* ::semicolon::? comment()*
 
 #rule:
-    <string> ::colon:: string() (::comma:: | comment() | string())* comment()* ::semicolon::? comment()*
+    <string> ::colon:: (<comma> | comment() | string())* comment()* (::semicolon::? | endl()) comment()*
 
 #ruleset:
-    selector() ::brace_:: (ruleset() | rule() | getVariable() | <string> ::semicolon::?)+ ::_brace:: comment()?
+    selector() ::brace_:: (comment() | function() | rule() | ruleset() | getVariable() | <string> ::semicolon::?)* ::_brace:: ::semicolon::? comment()?
 
 comment:
-    (::slash:: <string>? #commentLine | <block_comment>+ #commentBlock)
+    (<slash> #commentLine | <block_comment>+ #commentBlock)
