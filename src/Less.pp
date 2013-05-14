@@ -71,7 +71,7 @@ args:
     (::comma:: | <colon> | comment() | function() | string())*
 
 #function:
-    (<string> | <string>? #operation) ::parenthesis_:: args()? ::_parenthesis:: (::semicolon:: #functionCall)?
+    <string>? ::parenthesis_:: args()? ::_parenthesis:: (::semicolon:: #functionCall)?
 
 selector:
     <colon>? string() (<comma> | <colon> | comment() | string())*
@@ -81,13 +81,13 @@ declaration:
     ( ::at_charset:: #charset | ::at_import:: #import | ::at_importonce:: #importonce | ::at_namespace:: #namespace) string() ::semicolon::
 
 #getVariable:
-    ::at:: (::at:: #getVariableRelative)? <name> (::colon:: (<comma> | <string>)* #setVariable)?  comment()* ::semicolon::? comment()*
+    ::at:: (::at:: #getVariableRelative)? <name> (::colon:: (string() | <comma>)* #setVariable)?  comment()* ::semicolon::? comment()*
 
 #rule:
     <string> ::colon:: (<comma> | comment() | string())* comment()* (::semicolon::? | endl()) comment()*
 
 #ruleset:
-    selector() ::brace_:: (comment() | function() | rule() | ruleset() | getVariable() | <string> ::semicolon::?)* ::_brace:: ::semicolon::? comment()?
+    selector() ::brace_:: (comment() | function() | rule() | ruleset() | getVariable() | <string> ::semicolon::?)* ::_brace:: (::semicolon:: | comment())*
 
 comment:
     (<slash> #commentLine | <block_comment>+ #commentBlock)
