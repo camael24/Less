@@ -20,6 +20,6 @@ require_once implode(
             ->import('Compiler.Llk.~')
             ->import('Compiler.Visitor.Dump');
 
-        from('Hoathis')
+        from('Hoathis')->import('Less.~');
 
 ?>
