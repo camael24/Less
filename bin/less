@@ -14,9 +14,12 @@ require_once implode(
     )
 );
 
-echo resolve('hoa://Library/Hoathis/');
-from('Hoathis')->import('Less.Less');
+        from('Hoa')
+            ->import('File.Finder')
+            ->import('File.Read')
+            ->import('Compiler.Llk.~')
+            ->import('Compiler.Visitor.Dump');
 
-$less = new \Hoathis\Less\Less();
+        from('Hoathis')
 
 ?>
