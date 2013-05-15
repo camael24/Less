@@ -1,0 +1,22 @@
+#!/usr/bin/env php
+
+<?php
+
+
+$basedir = __DIR__ . DIRECTORY_SEPARATOR . '..';
+
+require_once implode(
+    DIRECTORY_SEPARATOR,
+    array(
+        $basedir,
+        'vendor',
+        'autoload.php'
+    )
+);
+
+echo resolve('hoa://Library/Hoathis/');
+from('Hoathis')->import('Less.Less');
+
+$less = new \Hoathis\Less\Less();
+
+?>

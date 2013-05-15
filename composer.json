@@ -1,0 +1,17 @@
+{
+    "name"             : "Hoathis/Less",
+    "description"      : "Compile Less file to css",
+    "minimum-stability": "dev",
+    "require"          : {
+        "php"         : ">=5.3.2",
+        "hoa/core"    : "dev-master",
+        "hoa/file"    : "dev-master",
+        "hoa/compiler": "dev-master"
+    },
+    "authors"          : [
+        {
+            "name" : "CLAUZEL Julien",
+            "email": "thehawk@hoa-project.net"
+        }
+    ]
+}
