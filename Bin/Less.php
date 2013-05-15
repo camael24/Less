@@ -8,7 +8,29 @@
         class Less extends \Hoa\Console\Dispatcher\Kit {
 
 
-            protected $options = array();
+            protected $options
+                = array(
+                    array(
+                        'file',
+                        \Hoa\Console\GetOption::REQUIRED_ARGUMENT,
+                        'f'
+                    ),
+                    array(
+                        'selftest',
+                        \Hoa\Console\GetOption::NO_ARGUMENT,
+                        't'
+                    ),
+                    array(
+                        'help',
+                        \Hoa\Console\GetOption::NO_ARGUMENT,
+                        'h'
+                    ),
+                    array(
+                        'help',
+                        \Hoa\Console\GetOption::NO_ARGUMENT,
+                        '?'
+                    )
+                );
 
 
             /**
@@ -33,12 +55,11 @@
              */
             public function usage () {
 
-                echo 'Usage   : hoathis context:set name', "\n", 'Options :', "\n", $this->makeUsageOptionsList(array(
-                                                                                                                     'copy'  => 'create new context from current context.',
-                                                                                                                     'file'  => 'add an external file to context configuration',
-                                                                                                                     'force' => 'Force parameter',
-                                                                                                                     'help'  => 'This help.'
-                                                                                                                )
+                echo 'Usage   : hoathis less:less', "\n", 'Options :', "\n", $this->makeUsageOptionsList(array(
+                                                                                                              'file'     => 'Parse a file and his depends',
+                                                                                                              'selftest' => 'Run suite test like lesscss.org',
+                                                                                                              'help'     => 'This help.'
+                                                                                                         )
                 ), "\n";
 
                 return;

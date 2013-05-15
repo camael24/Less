@@ -15,7 +15,6 @@
         "source": "http://github.com/camael24/hoaproject/"
     },
     "require"          : {
-
         "hoa/file"      : "dev-master",
         "hoa/compiler"  : "dev-master",
         "hoa/console"   : "dev-master",
