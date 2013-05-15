@@ -8,13 +8,11 @@
 %skip           slash                   //[^\v]*
 %skip           block_comment           /\*(.|\n)*?\*/
 
-
 // DECLARATION
 %token          at_charset              @charset
 %token          at_namespace            @namespace
 %token          at_importonce           @import-once
 %token          at_import               @import
-
 
 // VARIABLE
 %token          at                      @                   -> variable
@@ -22,17 +20,12 @@
 %token          variable:name           [a-z0-9A-Z\-]+      -> default
 
 // STRING
-%token          quote_                  ("|')+              -> string
-%token          string:string           [^"']+
-%token          string:_quote           ("|')+              -> default
+%token          stringInQuote           ("|')(.*)\1
 
 // FUNCTION
 %token          parenthesis_            \(
 %token          comma                   ,+
 %token          _parenthesis            \)
-
-
-
 
 // GENERIC
 %token          brace_                  {+
@@ -41,11 +34,6 @@
 %token          child                   >+
 %token          semicolon               ;+
 %token          string                  [^'"(\);,{}:\v]+
-
-
-
-
-
 
 // PRIMARY RULES
 #root:
@@ -58,10 +46,7 @@
 
 // PARSES RULES
 string:
-    (getVariable() | function()  | stringInQuote() | <http>? <string>)+
-
-stringInQuote:
-    ::quote_:: <string>? ::_quote::
+    (getVariable() | function()  | <stringInQuote> | <http>? <string>)+
 
 #function:
     <string>? ::parenthesis_:: (::comma:: | <colon> |  function() | string())* ::_parenthesis:: ::semicolon::?
