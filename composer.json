@@ -1,0 +1,26 @@
+{
+    "name"             : "hoathis/less",
+    "description"      : "Compile less to css",
+    "type"             : "library",
+    "authors"          : [
+        {
+            "name" : "Julien CLAUZEL",
+            "email": "thehawk@hoa-project.net"
+        }
+    ],
+    "support"          : {
+        "email" : "thehawk@hoa-project.net",
+        "forum" : "http://forum.hoa-project.net",
+        "irc"   : "irc://irc.freenode.org/hoaproject",
+        "source": "http://github.com/camael24/hoaproject/"
+    },
+    "require"          : {
+
+        "hoa/file"      : "dev-master",
+        "hoa/compiler"  : "dev-master",
+        "hoa/console"   : "dev-master",
+        "hoa/router"    : "dev-master",
+        "hoa/dispatcher": "dev-master"
+    },
+    "minimum-stability": "dev"
+}
