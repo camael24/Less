@@ -59,8 +59,11 @@
         }
         if($bool === false)
             echo \Hoa\Console\Chrome\Style::stylize($return, \Hoa\Console\Chrome\Style::COLOR_FOREGROUND_RED);
-        else
+        else {
+            echo 'Test : ' . \Hoa\Console\Chrome\Style::stylize(count($listFile) . ' files', \Hoa\Console\Chrome\Style::COLOR_FOREGROUND_GREEN) . ' on ' . \Hoa\Console\Chrome\Style::stylize((count($less->getInputFiles())) . ' tests', \Hoa\Console\Chrome\Style::COLOR_FOREGROUND_YELLOW) . "\n";
             echo \Hoa\Console\Chrome\Style::stylize('Well done padawan', \Hoa\Console\Chrome\Style::COLOR_FOREGROUND_GREEN);
+        }
+
 
     }
     catch (\Hoa\Core\Exception $e) {

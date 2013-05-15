@@ -5,7 +5,7 @@
 %token          http                    http://
 
 // COMMENT
-%skip           slash                   //[^\v]*
+%skip           slash                   //[^\v$]*
 %skip           block_comment           /\*(.|\n)*?\*/
 
 // DECLARATION
