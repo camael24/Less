@@ -35,7 +35,7 @@
         );
 
         foreach ($less->getInputFiles() as $file) {
-            echo $file ."\n";
+            echo $file . "\n";
             $listFile[] = $file;
             $out        = $less->validateFile($file);
             $bool       = array_key_exists('output', $out);
@@ -61,7 +61,7 @@
         echo \Hoa\Console\Chrome\Text::columnize($rapport) . "\n";
     }
     catch (\Hoa\Core\Exception $e) {
-        echo 'Before fail we pass : ' . \Hoa\Console\Chrome\Style::stylize((count($listFile) - 1) . ' files', \Hoa\Console\Chrome\Style::COLOR_FOREGROUND_GREEN) . "\n";
+        echo 'Before fail we pass : ' . \Hoa\Console\Chrome\Style::stylize((count($listFile) - 1) . ' files', \Hoa\Console\Chrome\Style::COLOR_FOREGROUND_GREEN) . ' on ' . \Hoa\Console\Chrome\Style::stylize((count($less->getInputFiles())) . ' tests', \Hoa\Console\Chrome\Style::COLOR_FOREGROUND_YELLOW) . "\n";
         echo 'Last file : ' . \Hoa\Console\Chrome\Style::stylize($file, \Hoa\Console\Chrome\Style::COLOR_FOREGROUND_RED) . "\n";
         echo $e->getFormattedMessage() . "\n";
         echo $e->getTraceAsString();

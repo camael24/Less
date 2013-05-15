@@ -16,11 +16,13 @@
 
 // VARIABLE
 %token          at                      @                   -> variable
+%token          variable:brace_         {
+%token          variable:_brace         }
 %token          variable:at             @
-%token          variable:name           [a-z0-9A-Z\-]+      -> default
+%token          variable:name           [a-z0-9A-Z\-_]+      -> default
 
 // STRING
-%token          stringInQuote           ("|')(.*)\1
+%token          stringInQuote           ("|')(.*?)\1
 
 // FUNCTION
 %token          parenthesis_            \(
@@ -33,7 +35,7 @@
 %token          colon                   :+
 %token          child                   >+
 %token          semicolon               ;+
-%token          string                  [^'"(\);,{}:\v]+
+%token          string                  [^@'"(\);,{}:\v]+
 
 // PRIMARY RULES
 #root:
@@ -59,10 +61,10 @@ declaration:
     ( ::at_charset:: #charset | ::at_import:: #import | ::at_importonce:: #importonce | ::at_namespace:: #namespace) string() ::semicolon::
 
 #getVariable:
-    ::at:: (::at:: #getVariableRelative)? <name> (::colon:: (string() | <comma>)* #setVariable)?  ::semicolon::?
+    ::at:: ((::at:: <name> #getVariableRelative) | ::brace_:: <name> ::_brace:: | <name> ( ::colon:: (<comma> | string())* ) ?) ::semicolon::?
 
 #rule:
     <string> ::colon:: (::comma:: | string())* ::semicolon::?
 
 #ruleset:
-    selector() ::brace_:: ( function() | rule() | ruleset() | getVariable())* ::_brace:: ::semicolon::?
+    selector() ::brace_:: ( getVariable() | function() | rule() | ruleset())* ::_brace:: ::semicolon::?
