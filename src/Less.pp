@@ -22,7 +22,7 @@
 %token          variable:name           [a-z0-9A-Z\-_]+      -> default
 
 // STRING
-%token          stringInQuote           ("|')(.*?)\1
+%token          stringInQuote           ("|'|`)(.*?)\1
 
 // FUNCTION
 %token          parenthesis_            \(
@@ -44,14 +44,14 @@
       | declaration()
       | getVariable()
       | ruleset()
-    )+
+    )*
 
 // PARSES RULES
 string:
-    (getVariable() | function()  | <stringInQuote> | <http>? <string>)+
+    (function() |getVariable() | <stringInQuote> | <http>? <string>)+
 
 #function:
-    <string>? ::parenthesis_:: (::comma:: | <colon> |  function() | string())* ::_parenthesis:: ::semicolon::?
+    (<string> | <string>? #parens)  ::parenthesis_:: (::comma:: | ::semicolon:: | <colon> | <child> |  function() | string())* ::_parenthesis::  ::semicolon::?
 
 selector:
     (<comma> | <colon> | <child> | string())*
@@ -67,4 +67,4 @@ declaration:
     <string> ::colon:: (::comma:: | string())* ::semicolon::?
 
 #ruleset:
-    selector() ::brace_:: ( getVariable() | function() | rule() | ruleset())* ::_brace:: ::semicolon::?
+    selector() ::brace_:: ( declaration() | getVariable() | function() | rule() | ruleset() | <string> ::semicolon::? )* ::_brace:: ::semicolon::?

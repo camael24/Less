@@ -57,8 +57,11 @@
             if($bool === false)
                 break;
         }
+        if($bool === false)
+            echo \Hoa\Console\Chrome\Style::stylize($return, \Hoa\Console\Chrome\Style::COLOR_FOREGROUND_RED);
+        else
+            echo \Hoa\Console\Chrome\Style::stylize('Well done padawan', \Hoa\Console\Chrome\Style::COLOR_FOREGROUND_GREEN);
 
-        echo \Hoa\Console\Chrome\Text::columnize($rapport) . "\n";
     }
     catch (\Hoa\Core\Exception $e) {
         echo 'Before fail we pass : ' . \Hoa\Console\Chrome\Style::stylize((count($listFile) - 1) . ' files', \Hoa\Console\Chrome\Style::COLOR_FOREGROUND_GREEN) . ' on ' . \Hoa\Console\Chrome\Style::stylize((count($less->getInputFiles())) . ' tests', \Hoa\Console\Chrome\Style::COLOR_FOREGROUND_YELLOW) . "\n";
