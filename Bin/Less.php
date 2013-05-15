@@ -41,6 +41,16 @@
              */
             public function main () {
 
+                while (false !== $c = $this->getOption($v)) switch ($c) {
+
+                    case 'h':
+                    case '?':
+                    default:
+                        return $this->usage();
+                        break;
+                }
+
+
                 echo 'Foo';
 
                 return;
