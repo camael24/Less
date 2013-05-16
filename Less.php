@@ -1,62 +1,22 @@
 <?php
-    namespace  Hoathis\Less{
+    namespace {
+        from('Hoa')
+            ->import('File.Finder')
+            ->import('File.Read')
+            ->import('Compiler.Llk.~')
+            ->import('Compiler.Visitor.Dump');
+    }
+    namespace Hoathis\Less {
 
         class Less {
+
             /**
              * @var \Hoa\Compiler\Llk\Parser
              */
             private $_compiler = null;
-            private $_inputDirectories = array();
-            private $_inputFiles = array();
-            private $_inputFilesFail = array();
 
-            public function setInputDirectories ($inputDirectories) {
-                $this->_inputDirectories = $inputDirectories;
-            }
-
-            public function getInputDirectories () {
-                return $this->_inputDirectories;
-            }
-
-            public function setInputFiles ($inputFiles) {
-                $this->_inputFiles = $inputFiles;
-            }
-
-            public function getInputFiles () {
-                return $this->_inputFiles;
-            }
-
-            public function getInputFilesFail () {
-                return $this->_inputFilesFail;
-            }
-
-            public function addInputDirectory ($directory, $fail = false) {
-                if(!in_array($directory, $this->_inputDirectories)) {
-                    $this->_inputDirectories[] = $directory;
-                    $finder                    = new \Hoa\File\Finder();
-                    $files                     = $finder
-                        ->in($directory)
-                        ->dots(false);
-
-                    foreach ($files as $file)
-                        if($file->isDir())
-                            $this->addInputDirectory($file->getPathName(), $fail);
-                        else if($file->getExtension() === 'less')
-                            $this->addInputFile($file->getPathName(), $fail);
-
-                }
-            }
-
-
-            public function addInputFile ($file, $fail = false) {
-                if($fail === false) {
-                    if(!in_array($file, $this->_inputFiles))
-                        $this->_inputFiles[] = $file;
-                }
-                else {
-                    if(!in_array($file, $this->_inputFilesFail))
-                        $this->_inputFilesFail[] = $file;
-                }
+            public function __construct () {
+                $this->setCompiler(\Hoa\Compiler\Llk::load(new \Hoa\File\Read('hoa://Library/Less/Less.pp')));
             }
 
             /**
@@ -73,17 +33,28 @@
                 return $this->_compiler;
             }
 
-            public function validateFile ($file) {
+            public function parse ($file) {
                 $compiler = $this->getCompiler();
+
+                return $compiler->parse("\n" . file_get_contents($file) . "\n");
+            }
+
+            public function test ($file) {
                 try {
-                    $parser = $compiler->parse("\n" . file_get_contents($file) . "\n");
+                    $parser = $this->parse($file);
                     $dump   = new \Hoa\Compiler\Visitor\Dump();
                     $visit  = $dump->visit($parser);
 
-                    return array('output' => $visit);
+                    return array(
+                        'output' => $visit,
+                        'bool'   => true
+                    );
                 }
                 catch (\Hoa\Compiler\Exception $e) {
-                    return array('error' => $e->getFormattedMessage());
+                    return array(
+                        'output' => $e->getFormattedMessage(),
+                        'bool'   => false
+                    );
 
                 }
             }
