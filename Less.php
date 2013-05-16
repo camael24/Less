@@ -41,25 +41,25 @@
 
             public function test ($file) {
                 try {
-//                    $hash   = '_' . md5($file);
-//                    $benchx = new \Hoa\Bench\Bench();
-//                    $benchx->$hash->start();
+                    $hash  = '_' . md5($file);
+                    $bench = new \Hoa\Bench\Bench();
+                    $bench->$hash->start();
                     $parser = $this->parse($file);
                     $dump   = new \Hoa\Compiler\Visitor\Dump();
                     $visit  = $dump->visit($parser);
-
-//                    $benchx->$hash->stop();
+                    $bench->$hash->stop();
 
                     return array(
                         'output' => $visit,
                         'bool'   => true,
-
+                        'time'   => $bench->$hash->diff()
                     );
                 }
                 catch (\Hoa\Compiler\Exception $e) {
                     return array(
                         'output' => $e->getFormattedMessage(),
-                        'bool'   => false
+                        'bool'   => false,
+                        'time'   => 0
                     );
 
                 }

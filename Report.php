@@ -40,18 +40,22 @@
 
             public function partialContent () {
 
+
                 if($this->_headerPublish === false) {
                     $this->_headerPublish = true;
                     $this->write($this->_header);
                 }
 
 
-                $array    = func_get_args();
-                $array[0] = $this->formatCols($array[0], $this->_maxChain);
+                $array = func_get_args();
+                if(array_key_exists(0, $array))
+                    $array[0] = $this->formatCols($array[0], $this->_maxChain);
                 if(array_key_exists(1, $array))
                     $array[1] = $this->resultToString($array[1], strlen($this->_header[1]), 1);
                 if(array_key_exists(2, $array))
                     $array[2] = $this->resultToString($array[2], strlen($this->_header[2]), 2);
+                if(array_key_exists(3, $array))
+                    $array[3] = $this->formatTime($array[3]);
 
                 $this->write($array);
 
@@ -89,6 +93,24 @@
                         return '';
 
                 }
+
+            }
+
+            public function formatTime ($time) {
+                if(!is_float($time))
+                    $time = floatval($time);
+                $color = null;
+                if($time > 1)
+                    $color = \Hoa\Console\Chrome\Style::COLOR_FOREGROUND_YELLOW;
+                if($time > 5)
+                    $color = \Hoa\Console\Chrome\Style::COLOR_FOREGROUND_RED;
+
+
+                $time = round($time * 1000, 5) . ' ms';
+                if($color !== null)
+                    return \Hoa\Console\Chrome\Style::stylize($time, $color);
+
+                return $time;
 
             }
 
