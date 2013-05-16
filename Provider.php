@@ -37,6 +37,7 @@
                     ->in($uri)
                     ->dots(false);
 
+
                 foreach ($files as $file)
                     if($file->isDir())
                         $this->addDirectory($file->getPathName(), $result);

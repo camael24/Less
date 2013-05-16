@@ -16,7 +16,7 @@
             private $_compiler = null;
 
             public function __construct () {
-                $this->setCompiler(\Hoa\Compiler\Llk::load(new \Hoa\File\Read('hoa://Library/Less/Less.pp')));
+                $this->setCompiler(\Hoa\Compiler\Llk::load(new \Hoa\File\Read('hoa://Library/Less/Grammar.pp')));
             }
 
             /**
@@ -41,13 +41,19 @@
 
             public function test ($file) {
                 try {
+//                    $hash   = '_' . md5($file);
+//                    $benchx = new \Hoa\Bench\Bench();
+//                    $benchx->$hash->start();
                     $parser = $this->parse($file);
                     $dump   = new \Hoa\Compiler\Visitor\Dump();
                     $visit  = $dump->visit($parser);
 
+//                    $benchx->$hash->stop();
+
                     return array(
                         'output' => $visit,
-                        'bool'   => true
+                        'bool'   => true,
+
                     );
                 }
                 catch (\Hoa\Compiler\Exception $e) {

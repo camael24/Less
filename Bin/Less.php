@@ -87,14 +87,13 @@
                     $bench->report->start();
 
                     $report = new \Hoathis\Less\Report($provider);
-                    $report->setHeader('URI', 'GRAMMAR TEST');
+                    $report->setHeader('URI', 'GRAMMAR TEST' , 'VISITOR TEST' , 'TIME');
 
                     $bench->report->stop();
 
                     $bench->test->start();
                     foreach ($provider->getFiles() as $uri => $expectedResult) {
                         $tmp    = $less->test($uri);
-                        $output = $tmp['output'];
                         $bool   = $tmp['bool'];
 
                         if($expectedResult === false) {
@@ -105,10 +104,10 @@
                         }
 
 
-                        $report->partialContent($uri, $bool);
+                        $report->partialContent($uri, $bool , true , 0);
                     }
 
-                    echo $report;
+                    echo $report; // TODO : Revoir les stats quand le visiteur sera opérationnel
                     $bench->test->stop();
                 }
                 if($file !== null) {
@@ -128,7 +127,7 @@
                 $bench->global->stop();
 
                 if($nBench === true)
-                    echo $bench;
+                    echo $bench->drawStatistic(80);
 
                 return;
             }
