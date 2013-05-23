@@ -46,8 +46,14 @@
                     $this->write($this->_header);
                 }
 
-
                 $array = func_get_args();
+                if(array_key_exists(1 , $array) && array_key_exists(0 , $array)){
+                    $bool = $array[1];
+                    if($bool !== true)
+                        $array[0] = \Hoa\Console\Chrome\Style::stylize($array[0], \Hoa\Console\Chrome\Style::COLOR_FOREGROUND_RED);
+                }
+
+
                 if(array_key_exists(0, $array))
                     $array[0] = $this->formatCols($array[0], $this->_maxChain);
                 if(array_key_exists(1, $array))

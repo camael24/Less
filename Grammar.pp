@@ -8,6 +8,11 @@
 %skip           slash                   //[^\v$]*
 %skip           block_comment           /\*(.|\n)*?\*/
 
+// KEYWORD
+%token          when                    when
+%token          at_fontface             @font-face
+%token          at_media                @media
+
 // DECLARATION
 %token          at_charset              @charset
 %token          at_namespace            @namespace
@@ -33,38 +38,80 @@
 %token          brace_                  {+
 %token          _brace                  }+
 %token          colon                   :+
+%token          equal                   =+
 %token          child                   >+
 %token          semicolon               ;+
-%token          string                  [^@'"(\);,{}:\v]+
+%token          string                  [^@'"\(\);,{}:\v]+
 
-// PRIMARY RULES
 #root:
     (
-       function()
+        function()
       | declaration()
-      | getVariable()
+      | variable()
       | ruleset()
     )*
 
 // PARSES RULES
 string:
-    (function() |getVariable() | <stringInQuote> | <http>? <string>)+
+    (
+        parens()
+      | function()
+      | variable()
+      | <stringInQuote>
+      | <http>? <string>
+     )+
+
+separator:
+   <comma>
+
+value:
+    string() (separator() string())*
 
 #function:
-    (<string> | <string>? #parens)  ::parenthesis_:: (::comma:: | ::semicolon:: | <colon> | <child> |  function() | string())* ::_parenthesis::  ::semicolon::?
+    <string> parens() ::semicolon::?
+
+#parens:
+    ::parenthesis_:: value()? ::_parenthesis::
 
 selector:
-    (<comma> | <colon> | <child> | string())*
-// LESS RULES
+    (
+        <comma>
+      | <colon>
+      | <child>
+      | <at_fontface>
+      | <at_media>
+      | <string>
+    )+
 
 declaration:
-    ( ::at_charset:: #charset | ::at_import:: #import | ::at_importonce:: #importonce | ::at_namespace:: #namespace) string() ::semicolon::
+    (
+        ::at_charset:: #charset
+      | ::at_import:: #import
+      | ::at_importonce:: #importonce
+      | ::at_namespace:: #namespace
+    ) string() when()? ::semicolon::
 
-#getVariable:
-    ::at:: ((::at:: <name> #getVariableRelative) | ::brace_:: <name> ::_brace:: | <name> ( ::colon:: (<comma> | string())* ) ?) ::semicolon::?
+#variableRelative:
+    ::at:: <name>
 
-#rule:
-    <string> ::colon:: (::comma:: | string())* ::semicolon::?
+variableInterpolation:
+    ::brace_:: <name> ::_brace::
+
+variable:
+    ::at:: ( variableRelative() | variableInterpolation() | rule() | <name> #variable )::semicolon::?
+
+rule:
+   (<string> #rule | <name> #set) (::colon:: | <equal>) value()
+
+instruction:
+    (
+        declaration()
+      | variable()
+      | rule()
+      | ruleset()
+    )*
+when:
+    <when> parens()
 
 #ruleset:
-    selector() ::brace_:: ( declaration() | getVariable() | function() | rule() | ruleset() | <string> ::semicolon::? )* ::_brace:: ::semicolon::?
+    selector() when()?  ::brace_::  instruction() (::semicolon:: instruction())* ::_brace:: ::semicolon::?

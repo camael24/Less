@@ -4,8 +4,10 @@
 
         from('Hoathis')
             ->import('Less.~')
-            ->import('Less.Provider')
-            ->import('Less.Report');
+        ->import('Less.Visitor.Css')
+        ->import('Less.Visitor.Exception')
+        ->import('Less.Provider')
+        ->import('Less.Report');
     }
 
     namespace Hoathis\Less\Bin {
@@ -16,6 +18,11 @@
 
             protected $options
                 = array(
+                    array(
+                        'debug',
+                        \Hoa\Console\GetOption::NO_ARGUMENT,
+                        'd'
+                    ),
                     array(
                         'file',
                         \Hoa\Console\GetOption::REQUIRED_ARGUMENT,
@@ -57,9 +64,13 @@
                 $test   = false;
                 $file   = null;
                 $nBench = false;
+                $debug  = false;
                 $bench->global->start();
                 while (false !== $c = $this->getOption($v)) switch ($c) {
 
+                    case 'd':
+                        $debug = true;
+                        break;
                     case 't':
                         $test = true;
                         break;
@@ -79,6 +90,7 @@
                     $bench->provider->start();
 
                     $provider = new \Hoathis\Less\Provider();
+
                     $provider->addValidDirectory('hoa://Library/Less/Test/less/valid/');
                     $provider->addErrorDirectory('hoa://Library/Less/Test/less/errors/');
 
@@ -93,9 +105,16 @@
 
                     $bench->test->start();
                     foreach ($provider->getFiles() as $uri => $expectedResult) {
-                        $tmp  = $less->test($uri);
+                        if($debug === true)
+                            echo $uri . "\n";
+                        $hash = '_' . md5($uri);
+
+                        $bench->$hash->start();
+                        $tmp = $less->test($uri);
+                        $bench->$hash->stop();
+
                         $bool = $tmp['bool'];
-                        $time = $tmp['time'];
+                        $time = $bench->$hash->diff();
 
                         if($expectedResult === false) {
                             if($bool === true)
@@ -119,10 +138,19 @@
                     $bench->parse->stop();
                     $bench->visit->start();
 
-                    $dump  = new \Hoa\Compiler\Visitor\Dump();
-                    $visit = $dump->visit($parser); // TODO : Change when i make the real visitor ;)
-                    echo $visit;
+                    $dump = new \Hoa\Compiler\Visitor\Dump();
+                    echo $dump->visit($parser);
 
+                    echo "\n" . str_repeat('-', 80) . "\n";
+
+//
+//                    $du = new \Hoathis\Less\Visitor\Css();
+//                    $du->visit($parser);
+
+
+//                    $du->output();
+
+                    echo "\n" . str_repeat('-', 80) . "\n";
                     $bench->visit->stop();
                 }
                 $bench->global->stop();
