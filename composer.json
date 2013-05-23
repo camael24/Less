@@ -12,7 +12,7 @@
         "email" : "thehawk@hoa-project.net",
         "forum" : "http://forum.hoa-project.net",
         "irc"   : "irc://irc.freenode.org/hoaproject",
-        "source": "http://github.com/camael24/hoaproject/"
+        "source": "http://github.com/camael24/less/"
     },
     "require"          : {
         "hoa/file"      : "dev-master",
